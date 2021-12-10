@@ -1,0 +1,39 @@
+.header {
+  height: 7rem;
+  color: #222222;
+  padding: 0.5rem 0;
+}
+
+.container {
+  justify-content: space-around;
+  padding: .5rem 0;
+  place-items: start;
+  min-height: 30rem;
+
+  &__gridItem {
+    display: flex;
+    place-content: center;
+
+    &__todoColumnContainer {
+        display: grid;
+        position: relative;
+        place-content: center;
+      min-height: 5rem;
+      min-width: 13rem;
+      padding: 1rem;
+      background-color: #ebecf0;
+      border-radius: 0.5rem;
+
+      &:nth-child(1) {
+          display: block;
+      }
+
+      &__paper {
+        min-height: 3rem;
+        width: 12rem;
+        padding: .5rem;
+        margin: 10px;
+      }
+    }
+  }
+}

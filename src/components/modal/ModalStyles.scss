@@ -1,0 +1,77 @@
+@import '../../styles/mixins.scss';
+
+.box {
+    background-color: #ffff;
+    border-radius: 5px;
+    place-content: start;
+    position: relative;
+    outline: none;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+    &__moreIcon {
+        position: absolute !important   ;
+        top: .5rem;
+        right: 1rem;
+        background-color: transparent;
+        border: none;
+        padding: 5px;
+        border-radius: 50px;
+
+        &:hover {
+            cursor: pointer;
+            background-color: rgb(170, 170, 170);
+        }
+    }
+
+    &__type {
+        color: rgb(179, 179, 179);
+        margin: 0;
+    }
+
+    &__title {
+        margin-bottom: .5rem;
+    }
+
+    &__hr {
+        background-color: rgb(34, 34, 34);
+        border-radius: 1rem;
+    }
+
+    &__description {
+        font-size: 1rem;
+        padding-right: 5rem;
+    }
+  
+
+
+    @include for-phone-only {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    @include for-tablet-portrait-up {
+        width: 75%;
+        padding: 2rem;
+    }
+
+    @include for-tablet-landscape-up {
+        width: 60%;
+    }
+
+    @include for-desktop-up {
+        width: 50%;
+    }
+}
+
+.menu {
+
+    ul {
+        padding: 0;
+    }
+
+    p {
+        font-size: .8rem;
+    }
+}
