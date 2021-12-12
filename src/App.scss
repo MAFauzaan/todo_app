@@ -2,6 +2,10 @@
   height: 7rem;
   color: #222222;
   padding: 0.5rem 0;
+
+  h1 {
+    font-size: 2rem;
+  }
 }
 
 .container {
@@ -15,9 +19,9 @@
     place-content: center;
 
     &__todoColumnContainer {
-        display: grid;
-        position: relative;
-        place-content: center;
+      display: grid;
+      position: relative;
+      place-content: center;
       min-height: 5rem;
       min-width: 13rem;
       padding: 1rem;

@@ -1,10 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { DefaultItemsModel } from '../model/Model'
 
-const months = ["January", "February", "March","April", "May", "Juny", "July", "Augustus", "September", "October", "November", "December"];
-let currentDatetime = new Date()
-let formattedDate = currentDatetime.getDate() + "-" + months[currentDatetime.getMonth()] + "-" + currentDatetime.getFullYear()
-
+import { formattedDate } from '../util/formattedDate';
 
 export const DefaultItems: DefaultItemsModel[] = [
     {

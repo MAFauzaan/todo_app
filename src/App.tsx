@@ -1,21 +1,80 @@
 import * as React from 'react';
-import { Container, Grid, Paper, ThemeProvider, createTheme } from '@mui/material';
+import { Container, Grid, Paper, Menu, MenuItem, Fade } from '@mui/material';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { v4 as uuid } from 'uuid';
 
-import { Column } from './dnd/Column';
+import { DefaultItems } from './dnd/DefaultItems'
 import { ColumnModel, DefaultItemsModel } from './model/Model';
 
 import Modal from './components/modal/Modal';
+import AddItemModal from './components/modal/AddItemModal';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import AddIcon from '@mui/icons-material/Add';  
 
 import "./App.scss"
+
+const onDragEnd = (result: any, columns: any, setColumns: any) => {
+  if (!result.destination) return;
+  const { source, destination } = result;
+
+  if (source.droppableId !== destination.droppableId) {
+    const sourceColumn = columns[source.droppableId];
+    const destColumn = columns[destination.droppableId];
+    const sourceItems = [...sourceColumn.items];
+    const destItems = [...destColumn.items];
+    const [removed] = sourceItems.splice(source.index, 1);
+    destItems.splice(destination.index, 0, removed);
+    setColumns({
+      ...columns,
+      [source.droppableId]: {
+        ...sourceColumn,
+        items: sourceItems
+      },
+      [destination.droppableId]: {
+        ...destColumn,
+        items: destItems
+      }
+    });
+  } else {
+    const column = columns[source.droppableId];
+    const copiedItems = [...column.items];
+    const [removed] = copiedItems.splice(source.index, 1);
+    copiedItems.splice(destination.index, 0, removed);
+    setColumns({
+      ...columns,
+      [source.droppableId]: {
+        ...column,
+        items: copiedItems
+      }
+    });
+  }
+};
+
 
 
 const App: React.FC = () => { 
 
-  const [ columns, setColumn ] = React.useState<ColumnModel>(Column);
+  const [ columnId, setColumnId ] = React.useState<string>(' ')
+
+  const [ columns, setColumn ] = React.useState<ColumnModel>({
+    [uuid()]: {
+        name: "To do",
+        items: DefaultItems
+      },
+      [uuid()]: {
+        name: "Doing",
+        items: []
+      },
+      [uuid()]: {
+        name: "Finished",
+        items: []
+      }
+});
+
   const [ columnType, setColumnType ] = React.useState<string>('')
-  const [ open, setOpen ] = React.useState<boolean>(false);
+  const [ openDetail, setOpenDetail ] = React.useState<boolean>(false);
+  const [ openAddItem, setOpenAddItem ] = React.useState<boolean>(false);
+
   const [ item, setItem ] = React.useState<DefaultItemsModel>({
     id: '',
     title: '',
@@ -23,15 +82,38 @@ const App: React.FC = () => {
     date: ''
   })
 
-  const openModalHandler = (item: DefaultItemsModel, name: string):void => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+
+  const openMenu = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = (): void => {
+    setAnchorEl(null);
+  }; 
+
+  const openModalHandler = (item: DefaultItemsModel, name: string, id:string):void => {
     setColumnType(name)
+    setColumnId(id)
     setItem(item)
-    setOpen(true)
+    setOpenDetail(true)
+
   }
 
-  
   const closeModalHandler = ():void => {
-    setOpen(false)
+    setOpenDetail(false)
+  }
+
+  const openAddModal = (): void => {
+    setOpenAddItem(true)
+    setAnchorEl(null)
+  }
+
+  const closeAddModal = (): void => {
+    setOpenAddItem(false)
   }
 
   return (
@@ -41,7 +123,7 @@ const App: React.FC = () => {
           <h1>My Todo</h1>
         </div>
         <Grid container spacing={5} className='container'>
-        <DragDropContext onDragEnd={result => console.log(result)}>
+        <DragDropContext  onDragEnd={result => onDragEnd(result, columns, setColumn)}>
           {
             Object.entries(columns).map(([id, column]) => {
               return (
@@ -55,14 +137,19 @@ const App: React.FC = () => {
                             className='container__gridItem__todoColumnContainer'
                           >
                             <h2>{column.name}</h2>
-                            <MoreVertIcon sx={{
-                              position: 'absolute',
-                              top: '1rem',
-                              right: '1rem',
-                              '&:hover': {
-                                cursor: 'pointer'
-                              }
-                            }}/>
+                            {
+                              column.name === 'To do' &&
+                              <button onClick={handleClick} style={{
+                                  position: 'absolute',
+                                  top: '1rem',
+                                  right: '1rem',
+                                  cursor: 'pointer',
+                                  background: 'transparent',
+                                  border: 'none'
+                              }}>
+                                <MoreVertIcon />
+                              </button>
+                            }
                             {
                               column.items.map((item, index) => {
                                 return (
@@ -77,14 +164,14 @@ const App: React.FC = () => {
                                             ref={provided.innerRef}
                                             {...provided.draggableProps}
                                             {...provided.dragHandleProps}  
-                                            onClick={() => openModalHandler(item, column.name)}                                          
+                                            onClick={() => openModalHandler(item, column.name, id)}                                          
                                             sx={{
                                               backgroundColor: snapshot.isDragging ? '#9d9f99' : '#ffff'
                                             }}
                                             className='container__gridItem__todoColumnContainer__paper'
                                           > 
-                                            <h3>{item.title}</h3>
-                                            {/* <Typography variant="body1">{item.description}</Typography> */}
+                                            <h2>{item.title}</h2>
+                                            <p>{item.date}</p>
                                           </Paper>
                                         )
                                       }}
@@ -98,12 +185,47 @@ const App: React.FC = () => {
                     }}
                 </Droppable>
               )
-            })
+            })  
           }
+              <Menu
+                anchorEl={anchorEl}
+                open={openMenu}
+                onClose={handleClose}
+                TransitionComponent={Fade}
+                className='menu'
+                >
+                <MenuItem onClick={() => openAddModal()}>
+                  <AddIcon /> 
+                  <p style={{fontFamily: 'Nunito Sans'}}>Add Todo</p>
+                </MenuItem>
+              </Menu>
         </DragDropContext>
       </Grid>
     </Container>
-    <Modal columnType={columnType} item={item} open={open} onClose={closeModalHandler}/>
+
+    {
+      openAddItem ?
+      <AddItemModal 
+        columnType={columnType} 
+        open={openAddItem} 
+        onClose={closeAddModal}
+        columns={columns}
+        columnId={columnId}
+        setColumn={setColumn}
+        setOpen={setOpenAddItem}
+      />
+      :
+      <Modal 
+        columnType={columnType} 
+        item={item} 
+        open={openDetail} 
+        onClose={closeModalHandler}
+        columns={columns}
+        columnId={columnId}
+        setColumn={setColumn}
+        setOpen={setOpenDetail}
+      />
+    }
   </React.Fragment>
   )
 }

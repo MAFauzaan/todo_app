@@ -2,6 +2,9 @@
 
 .box {
     background-color: #ffff;
+    padding: 2rem;
+    display: grid;
+    min-height: 30%;
     border-radius: 5px;
     place-content: start;
     position: relative;
@@ -31,7 +34,7 @@
     }
 
     &__title {
-        margin-bottom: .5rem;
+        margin-bottom: 2rem;
     }
 
     &__hr {
@@ -43,26 +46,22 @@
         font-size: 1rem;
         padding-right: 5rem;
     }
+
+    &__btn-group {
+        position: absolute;
+        bottom: 1rem;
+        left: 2rem;
+    }
   
-
-
     @include for-phone-only {
         width: 100%;
-        padding: 1rem;
     }
 
     @include for-tablet-portrait-up {
-        width: 75%;
+        width: 30rem;
         padding: 2rem;
     }
 
-    @include for-tablet-landscape-up {
-        width: 60%;
-    }
-
-    @include for-desktop-up {
-        width: 50%;
-    }
 }
 
 .menu {
