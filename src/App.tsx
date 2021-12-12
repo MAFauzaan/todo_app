@@ -6,6 +6,7 @@ import { v4 as uuid } from 'uuid';
 import { DefaultItems } from './dnd/DefaultItems'
 import { ColumnModel, DefaultItemsModel } from './model/Model';
 
+import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import Modal from './components/modal/Modal';
 import AddItemModal from './components/modal/AddItemModal';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -49,7 +50,6 @@ const onDragEnd = (result: any, columns: any, setColumns: any) => {
     });
   }
 };
-
 
 
 const App: React.FC = () => { 
@@ -120,6 +120,7 @@ const App: React.FC = () => {
     <React.Fragment>
       <Container>
         <div className="header">
+          <PlaylistAddCheckIcon fontSize='large' sx={{marginRight: '.5rem', color: '#ffff'}} />
           <h1>My Todo</h1>
         </div>
         <Grid container spacing={5} className='container'>
